@@ -1,6 +1,7 @@
 import copy
 import torch.nn as nn
 import torch.nn.utils as utils
+import torch.nn.functional as F
 import torch.optim as optim
 import torch.optim.lr_scheduler as lrs
 import torch.nn.parallel as P
@@ -101,6 +102,8 @@ class Trainer():
             # valid 会在modcrop将hr_img转移到cpu
             hr_img = modcrop(hr_img, self.args.scale)
             border = self.args.scale
+            if sr_img.size() != hr_img.size():
+                sr_img = F.interpolate(sr_img, size=hr_img.size()[2:], mode='bilinear', align_corners=False)
             psnr = calculate_psnr(sr_img, hr_img, border=border)
             ssim = calculate_ssim(sr_img, hr_img, border=border)
             psnr_ls.append(psnr)
