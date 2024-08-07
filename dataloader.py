@@ -30,8 +30,8 @@ class MyDataset(data.Dataset):
         if self.mode == 'train':
             # im = read_img(im_path)  # bgr or gray, hwc, 0-255 -> 0-1, ndarray
             # gt = read_img(gt_path)  # bgr or gray, hwc, 0-255 -> 0-1, ndarray
-            im = read_img_v2(im_path, self.data_range, self.data_format, dtype=np.float)
-            gt = read_img_v2(gt_path, self.data_range, self.data_format, dtype=np.float)
+            im = read_img_v2(im_path, self.data_range, self.data_format, dtype=float)
+            gt = read_img_v2(gt_path, self.data_range, self.data_format, dtype=float)
             if self.transform is not None:
                 im, gt = self.transform(im, gt)
             im = single2tensor3(im)  # chw
@@ -41,7 +41,7 @@ class MyDataset(data.Dataset):
         elif self.mode == 'valid':
             # im = imread_uint(im_path)  # 0-255
             # gt = imread_uint(gt_path)  # 0-255
-            im = read_img_v2(im_path, self.data_range, self.data_format, dtype=np.float)
+            im = read_img_v2(im_path, self.data_range, self.data_format, dtype=float)
             gt = read_img_v2(gt_path, 255, self.data_format, dtype=np.uint8)
             # im = uint2tensor3(im)  # 0-255 -> 0-1, float tensor
             im = single2tensor3(im)
@@ -49,7 +49,7 @@ class MyDataset(data.Dataset):
         elif self.mode == 'test':
             # im = imread_uint(im_path)  # 0-255
             # gt = imread_uint(gt_path)  # 0-255
-            im = read_img_v2(im_path, self.data_range, self.data_format, dtype=np.float)
+            im = read_img_v2(im_path, self.data_range, self.data_format, dtype=float)
             gt = read_img_v2(gt_path, 255, self.data_format, dtype=np.uint8)
             # im = uint2tensor3(im)  # 0-255 -> 0-1, float tensor
             im = single2tensor3(im)
