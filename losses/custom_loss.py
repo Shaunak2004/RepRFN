@@ -28,9 +28,9 @@ class CustomLoss(torch.nn.Module):
 
     def forward(self, X, Y):
         pixel_loss = self.charbonnierloss(X, Y)
-        fft_loss = self.l1loss(torch.fft.fft2(X, dim=(-2, -1)),torch.fft.fft2(Y, dim=(-2, -1)))
-        # fft_loss = self.charbonnierloss(torch.fft.fft2(X, dim=(-2, -1)),
-        #                                 torch.fft.fft2(Y, dim=(-2, -1)))
+        #fft_loss = self.l1loss(torch.fft.fft2(X, dim=(-2, -1)),torch.fft.fft2(Y, dim=(-2, -1)))
+        fft_loss = self.charbonnierloss(torch.fft.fft2(X, dim=(-2, -1)),
+                                         torch.fft.fft2(Y, dim=(-2, -1)))
         return 0.9 * pixel_loss + 0.1 * fft_loss
 
 
