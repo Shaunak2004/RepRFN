@@ -11,7 +11,7 @@ class CharbonnierLoss(torch.nn.Module):
     def forward(self, X, Y):
         print(f"X shape: {X.shape}, Y shape: {Y.shape}")  # Add this line
         if X.size() != Y.size():
-            Y = F.interpolate(Y, size=X.size()[2:], mode='bilinear', align_corners=False)
+            X = F.interpolate(X, size=Y.size()[2:], mode='bilinear', align_corners=False)
         diff = torch.add(X, -Y)
         error = torch.sqrt(diff * diff + self.eps)
         loss = torch.mean(error)  # 论文里面没有取均值，这里应该是为了数值小
