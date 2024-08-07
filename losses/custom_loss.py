@@ -37,14 +37,16 @@ class CustomLoss(torch.nn.Module):
         X_fft = torch.fft.fft2(X, dim=(-2, -1))
         Y_fft = torch.fft.fft2(Y, dim=(-2, -1))
         
-        # If sizes of X_fft and Y_fft are different, interpolate them
-        if X_fft.size() != Y_fft.size():
-            X_fft = F.interpolate(X_fft.real.unsqueeze(0), size=Y_fft.size()[2:], mode='bilinear', align_corners=False).squeeze(0)
-            Y_fft = F.interpolate(Y_fft.real.unsqueeze(0), size=X_fft.size()[2:], mode='bilinear', align_corners=False).squeeze(0)
-            X_fft = torch.complex(X_fft, X_fft.imag)
-            Y_fft = torch.complex(Y_fft, Y_fft.imag)
+        # Compute magnitudes of FFT results
+        X_fft_magnitude = torch.abs(X_fft)
+        Y_fft_magnitude = torch.abs(Y_fft)
         
-        fft_loss = self.charbonnierloss(X_fft, Y_fft)
+        # If sizes of X_fft and Y_fft are different, interpolate them
+        if X_fft_magnitude.size() != Y_fft_magnitude.size():
+            X_fft_magnitude = F.interpolate(X_fft_magnitude.unsqueeze(0), size=Y_fft_magnitude.size()[2:], mode='bilinear', align_corners=False).squeeze(0)
+            Y_fft_magnitude = F.interpolate(Y_fft_magnitude.unsqueeze(0), size=X_fft_magnitude.size()[2:], mode='bilinear', align_corners=False).squeeze(0)
+        
+        fft_loss = self.charbonnierloss(X_fft_magnitude, Y_fft_magnitude)
         return 0.9 * pixel_loss + 0.1 * fft_loss
 
 
