@@ -102,8 +102,10 @@ class Trainer():
             # valid 会在modcrop将hr_img转移到cpu
             hr_img = modcrop(hr_img, self.args.scale)
             border = self.args.scale
+            sr_img_size = sr_img.size()
+            hr_img_size = sr_img.size()
             if sr_img.size() != hr_img.size():
-                sr_img = F.interpolate(sr_img, size=hr_img.size()[2:], mode='bilinear', align_corners=False)
+                sr_img = F.interpolate(sr_img, size=hr_img_size[2:], mode='bilinear', align_corners=False)
             psnr = calculate_psnr(sr_img, hr_img, border=border)
             ssim = calculate_ssim(sr_img, hr_img, border=border)
             psnr_ls.append(psnr)
