@@ -1,5 +1,5 @@
 import torch
-
+import torch.nn.functional as F
 
 class CharbonnierLoss(torch.nn.Module):
     """L1 Charbonnierloss. from paper <<Fast and Accurate Image Super-Resolution with Deep Laplacian Pyramid Networks>>"""
