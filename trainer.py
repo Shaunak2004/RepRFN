@@ -110,8 +110,7 @@ class Trainer():
             hr_img_size = sr_img.shape
             print(f"sr_img.shape: {sr_img.shape}")
             print(f"hr_img.shape: {hr_img.shape}")
-            if sr_img.shape != hr_img.shape:
-                sr_img = F.interpolate(sr_img, size=hr_img_size[2:], mode='bilinear', align_corners=False)
+            sr_img = F.interpolate(sr_img, size=hr_img.shape[2:], mode='bilinear', align_corners=False)
             sr_img = sr_img.squeeze(0).permute(1, 2, 0).numpy()
             hr_img = hr_img.squeeze(0).permute(1, 2, 0).numpy()
             print(f"sr_img.shape: {sr_img.shape}")
