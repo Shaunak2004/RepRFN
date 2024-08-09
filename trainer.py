@@ -108,21 +108,20 @@ class Trainer():
             border = self.args.scale
             sr_img_size = sr_img.shape
             hr_img_size = sr_img.shape
-            print(f"sr_img.shape: {sr_img.shape}")
-            print(f"hr_img.shape: {hr_img.shape}")
+            
             sr_img = F.interpolate(sr_img, size=hr_img.shape[2:], mode='bilinear', align_corners=False)
             sr_img = sr_img.squeeze(0).permute(1, 2, 0).numpy()
             hr_img = hr_img.squeeze(0).permute(1, 2, 0).numpy()
-            print(f"sr_img.shape: {sr_img.shape}")
-            print(f"hr_img.shape: {hr_img.shape}")
+            
             psnr = calculate_psnr(sr_img, hr_img, border=border)
             ssim = calculate_ssim(sr_img, hr_img, border=border)
             psnr_ls.append(psnr)
             ssim_ls.append(ssim)
-            valid_bar.desc = f'psnr:{psnr:.5f},ssim:{ssim:.5f}'  # 可视化训练进程
+              # 可视化训练进程
         torch.set_grad_enabled(True)
         ave_psnr = sum(psnr_ls) / len(psnr_ls)
         ave_ssim = sum(ssim_ls) / len(ssim_ls)
+        valid_bar.desc = f'psnr:{avg_psnr:.5f},ssim:{avg_ssim:.5f}'
         self.log_writer.add_scalar('average psnr', ave_psnr, epoch)
         self.log_writer.add_scalar('average ssim', ave_ssim, epoch)
 
