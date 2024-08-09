@@ -121,7 +121,7 @@ class Trainer():
         torch.set_grad_enabled(True)
         ave_psnr = sum(psnr_ls) / len(psnr_ls)
         ave_ssim = sum(ssim_ls) / len(ssim_ls)
-        valid_bar.desc = f'psnr:{ave_psnr:.5f},ssim:{ave_ssim:.5f}'
+        print(f'psnr:{ave_psnr:.5f},ssim:{ave_ssim:.5f}')
         self.log_writer.add_scalar('average psnr', ave_psnr, epoch)
         self.log_writer.add_scalar('average ssim', ave_ssim, epoch)
 
