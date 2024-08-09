@@ -101,6 +101,10 @@ class Trainer():
             hr_img = hr_img.squeeze()  # 1HWC -> HWC
             # valid 会在modcrop将hr_img转移到cpu
             hr_img = modcrop(hr_img, self.args.scale)
+            sr_img = torch.from_numpy(sr_img).float()
+            sr_img = sr_img.permute(2, 0, 1).unsqueeze(0)
+            hr_img = torch.from_numpy(hr_img).float()
+            hr_img = hr_img.permute(2, 0, 1).unsqueeze(0)
             border = self.args.scale
             sr_img_size = sr_img.shape
             hr_img_size = sr_img.shape
@@ -108,6 +112,8 @@ class Trainer():
             print(f"hr_img.shape: {hr_img.shape}")
             if sr_img.shape != hr_img.shape:
                 sr_img = F.interpolate(sr_img, size=hr_img_size[2:], mode='bilinear', align_corners=False)
+            sr_img = sr_img.squeeze(0).permute(1, 2, 0).numpy()
+            hr_img = hr_img.squeeze(0).permute(1, 2, 0).numpy()
             psnr = calculate_psnr(sr_img, hr_img, border=border)
             ssim = calculate_ssim(sr_img, hr_img, border=border)
             psnr_ls.append(psnr)
