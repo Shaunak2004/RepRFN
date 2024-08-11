@@ -33,21 +33,8 @@ class CustomLoss(torch.nn.Module):
         # Compute pixel loss
         pixel_loss = self.charbonnierloss(X, Y)
         
-        # Compute FFT loss
-        X_fft = torch.fft.fft2(X, dim=(-2, -1))
-        Y_fft = torch.fft.fft2(Y, dim=(-2, -1))
-        
-        # Compute magnitudes of FFT results
-        X_fft_magnitude = torch.abs(X_fft)
-        Y_fft_magnitude = torch.abs(Y_fft)
-        
-        # If sizes of X_fft and Y_fft are different, interpolate them
-        if X_fft_magnitude.size() != Y_fft_magnitude.size():
-            X_fft_magnitude = F.interpolate(X_fft_magnitude.unsqueeze(0), size=Y_fft_magnitude.size()[2:], mode='bilinear', align_corners=False).squeeze(0)
-            Y_fft_magnitude = F.interpolate(Y_fft_magnitude.unsqueeze(0), size=X_fft_magnitude.size()[2:], mode='bilinear', align_corners=False).squeeze(0)
-        
-        fft_loss = self.charbonnierloss(X_fft_magnitude, Y_fft_magnitude)
-        return 0.9 * pixel_loss + 0.1 * fft_loss
+        l1_loss = self.l1loss(X, Y)
+        return 0.2 * pixel_loss + 0.8 * l1_loss
 
 
 if __name__ == '__main__':
