@@ -47,7 +47,13 @@ class Tester():
             # # calculate_ssim的输入必须是uint8
             # ssim = calculate_ssim(sr_img, hr_img, border=border)
             # import basicsr.metrics.psnr_ssim
+            sr_img = torch.from_numpy(sr_img).float()
+            sr_img = sr_img.permute(2, 0, 1).unsqueeze(0)
+            hr_img = torch.from_numpy(hr_img).float()
+            hr_img = hr_img.permute(2, 0, 1).unsqueeze(0)
             sr_img = F.interpolate(sr_img, size=hr_img.shape[2:], mode='bilinear', align_corners=False)
+            sr_img = sr_img.squeeze(0).permute(1, 2, 0).numpy()
+            hr_img = hr_img.squeeze(0).permute(1, 2, 0).numpy()
             psnr = basicsr.metrics.psnr_ssim.calculate_psnr(hr_img, sr_img, crop_border=border, test_y_channel=self.args.psnr_ssim_y)
             ssim = basicsr.metrics.psnr_ssim.calculate_ssim(hr_img, sr_img, crop_border=border, test_y_channel=self.args.psnr_ssim_y)
 
