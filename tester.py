@@ -47,6 +47,7 @@ class Tester():
             # # calculate_ssim的输入必须是uint8
             # ssim = calculate_ssim(sr_img, hr_img, border=border)
             # import basicsr.metrics.psnr_ssim
+            sr_img = F.interpolate(sr_img, size=hr_img.shape[2:], mode='bilinear', align_corners=False)
             psnr = basicsr.metrics.psnr_ssim.calculate_psnr(hr_img, sr_img, crop_border=border, test_y_channel=self.args.psnr_ssim_y)
             ssim = basicsr.metrics.psnr_ssim.calculate_ssim(hr_img, sr_img, crop_border=border, test_y_channel=self.args.psnr_ssim_y)
 
