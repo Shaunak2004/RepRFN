@@ -54,8 +54,8 @@ class Tester():
             sr_img = F.interpolate(sr_img, size=hr_img.shape[2:], mode='bilinear', align_corners=False)
             sr_img = sr_img.squeeze(0).permute(1, 2, 0).numpy()
             hr_img = hr_img.squeeze(0).permute(1, 2, 0).numpy()
-            psnr = basicsr.metrics.psnr_ssim.calculate_psnr(hr_img, sr_img, crop_border=border, test_y_channel=self.args.psnr_ssim_y)
-            ssim = basicsr.metrics.psnr_ssim.calculate_ssim(hr_img, sr_img, crop_border=border, test_y_channel=self.args.psnr_ssim_y)
+            psnr = basicsr.metrics.psnr_ssim.calculate_psnr(hr_img, sr_img, crop_border=border)
+            ssim = basicsr.metrics.psnr_ssim.calculate_ssim(hr_img, sr_img, crop_border=border)
 
             psnr_ls.append(psnr)
             ssim_ls.append(ssim)
