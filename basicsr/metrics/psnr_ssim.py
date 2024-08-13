@@ -59,50 +59,29 @@ def calculate_psnr_pt(img, img2, crop_border, test_y_channel=False, **kwargs):
 
 
 @METRIC_REGISTRY.register()
-def calculate_ssim(img, img2, crop_border, input_order='HWC', test_y_channel=False, **kwargs):
-    """Calculate SSIM (structural similarity).
+def calculate_ssim(img1, img2, border=0):
+    '''calculate SSIM
+    the same outputs as MATLAB's
+    img1, img2: [0, 255]
+    '''
+    if not img1.shape == img2.shape:
+        raise ValueError('Input images must have the same dimensions.')
+    h, w = img1.shape[:2]
+    img1 = img1[border:h - border, border:w - border]
+    img2 = img2[border:h - border, border:w - border]
 
-    ``Paper: Image quality assessment: From error visibility to structural similarity``
-
-    The results are the same as that of the official released MATLAB code in
-    https://ece.uwaterloo.ca/~z70wang/research/ssim/.
-
-    For three-channel images, SSIM is calculated for each channel and then
-    averaged.
-
-    Args:
-        img (ndarray): Images with range [0, 255].
-        img2 (ndarray): Images with range [0, 255].
-        crop_border (int): Cropped pixels in each edge of an image. These pixels are not involved in the calculation.
-        input_order (str): Whether the input order is 'HWC' or 'CHW'.
-            Default: 'HWC'.
-        test_y_channel (bool): Test on Y channel of YCbCr. Default: False.
-
-    Returns:
-        float: SSIM result.
-    """
-
-    assert img.shape == img2.shape, (f'Image shapes are different: {img.shape}, {img2.shape}.')
-    if input_order not in ['HWC', 'CHW']:
-        raise ValueError(f'Wrong input_order {input_order}. Supported input_orders are "HWC" and "CHW"')
-    img = reorder_image(img, input_order=input_order)
-    img2 = reorder_image(img2, input_order=input_order)
-
-    if crop_border != 0:
-        img = img[crop_border:-crop_border, crop_border:-crop_border, ...]
-        img2 = img2[crop_border:-crop_border, crop_border:-crop_border, ...]
-
-    if test_y_channel:
-        img = to_y_channel(img)
-        img2 = to_y_channel(img2)
-
-    img = img.astype(np.float64)
-    img2 = img2.astype(np.float64)
-
-    ssims = []
-    for i in range(img.shape[2]):
-        ssims.append(_ssim(img[..., i], img2[..., i]))
-    return np.array(ssims).mean()
+    if img1.ndim == 2:
+        return ssim(img1, img2)
+    elif img1.ndim == 3:
+        if img1.shape[2] == 3:
+            ssims = []
+            for i in range(3):
+                ssims.append(ssim(img1, img2))
+            return np.array(ssims).mean()
+        elif img1.shape[2] == 1:
+            return ssim(np.squeeze(img1), np.squeeze(img2))
+    else:
+        raise ValueError('Wrong input image dimensions.')
 
 
 @METRIC_REGISTRY.register()
